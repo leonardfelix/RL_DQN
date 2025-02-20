@@ -1,0 +1,29 @@
+cartpole1:
+  env_id: CartPole-v1
+  checkpoint: "runs/cartpole1.pth"
+  replay_memory_size: 10000
+  batch_size: 32
+  epsilon_start: 1.0
+  epsilon_decay: 0.9995
+  epsilon_end: 0.05
+  network_sync_rate: 10
+  discount_factor: 0.99
+  lr: 0.001
+  hidden_dims: 10
+  maximum_reward_stop: 100000
+  
+
+
+flappybird1:
+  env_id: FlappyBird-v0
+  checkpoint: "runs/flappybird1.pth"
+  replay_memory_size: 10000
+  batch_size: 32
+  epsilon_start: 1.0
+  epsilon_decay: 0.9995
+  epsilon_end: 0.05
+  network_sync_rate: 10
+  discount_factor: 0.99
+  lr: 0.001
+  hidden_dims: 256
+  maximum_reward_stop: 100000
