@@ -1,5 +1,6 @@
 from collections import deque
 import random
+import pickle
 
 class ReplayMemory():
     def __init__(self, maxlen):
@@ -10,6 +11,18 @@ class ReplayMemory():
 
     def sample(self, batch_size):
         return random.sample(self.memory, batch_size)
+
+    def save_memory_to_file(self, filename):
+        with open(filename, 'wb') as file:
+            pickle.dump(self.memory, file)
+
+    def load_memory_from_file(self, filename):
+        with open(filename, 'rb') as file:
+            self.memory = pickle.load(file)
+
+    # for testing
+    def get_first(self):
+        return self.memory[0]
 
     def __len__(self):
         return len(self.memory)

@@ -29,7 +29,7 @@ os.makedirs(RUNS_DIR, exist_ok=True)
 matplotlib.use('Agg')
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-device = 'cpu'
+# device = 'cpu'
 
 class Agent:
 
@@ -44,6 +44,7 @@ class Agent:
         self.hyperparameters = hyperparameters
         self.env_id = instance_hyperparameters['env_id']
         self.checkpoint = instance_hyperparameters['checkpoint']
+        self.prior_data = instance_hyperparameters['prior_data']
         self.replay_memory_size = instance_hyperparameters['replay_memory_size']
         self.batch_size = instance_hyperparameters['batch_size']
         self.epsilon_start = instance_hyperparameters['epsilon_start']
@@ -54,16 +55,18 @@ class Agent:
         self.lr = instance_hyperparameters['lr']
         self.hidden_dims = instance_hyperparameters['hidden_dims']
         self.maximum_reward_stop = instance_hyperparameters['maximum_reward_stop']
+        self.enable_double_DQN = instance_hyperparameters['enable_double_DQN']
+        self.enable_dueling_DQN = instance_hyperparameters['enable_dueling_DQN']
 
         # define loss and optimiser
         self.loss_fn = torch.nn.MSELoss()
         self.optimiser = None
         
-
         # path to run info
         self.LOG_FILE = os.path.join(RUNS_DIR, f"{self.hyperparameters}.log")
         self.MODEL_FILE = os.path.join(RUNS_DIR, f"{self.hyperparameters}.pth")
         self.GRAPH_FILE = os.path.join(RUNS_DIR, f"{self.hyperparameters}.png")
+        self.DATA_FILE = os.path.join(RUNS_DIR, f"{self.hyperparameters}.pkl")
 
     def run(self, is_training=True, render=False):
         """
@@ -87,25 +90,41 @@ class Agent:
         rewards_per_episode = []
         
         # Initialize the policy DQN with the specified dimensions and move it to the appropriate device
-        policy_dqn = DQN(state_dim=num_states, action_dim=num_actions, hidden_dim=self.hidden_dims).to(device)
+        policy_dqn = DQN(state_dim=num_states, action_dim=num_actions, hidden_dim=self.hidden_dims, enable_dueling_DQN=self.enable_dueling_DQN).to(device)
 
         # Set up the optimizer with the policy DQN parameters and learning rate
         self.optimiser = torch.optim.Adam(params=policy_dqn.parameters(), lr=self.lr)
 
         if is_training:
 
+            # Print confirmation conficguration
             # if provided checkpoint, load from it
             if self.checkpoint != "":
                 print("Loading from checkpoint...")
                 policy_dqn.load_state_dict(torch.load(self.checkpoint))
                 print(f"Checkpoint loaded from {self.checkpoint}")
+            else:
+                print("Training from scratch...")
+
+            if self.enable_double_DQN:
+                print("Double DQN enabled")
+            if self.enable_dueling_DQN:
+                print("Dueling DQN enabled")
+
                 
             # set up the memory, target network, and step count
             memory = ReplayMemory(self.replay_memory_size)
 
+            # load if prior data is provided
+            if self.prior_data != "":
+                print("Loading prior data...")
+                memory.load_memory_from_file(self.prior_data)
+                print(f"Prior data loaded from {self.prior_data}")
+
+
             epsilon = self.epsilon_start
 
-            target_dqn = DQN(state_dim=num_states, action_dim=num_actions, hidden_dim=self.hidden_dims).to(device)
+            target_dqn = DQN(state_dim=num_states, action_dim=num_actions, hidden_dim=self.hidden_dims, enable_dueling_DQN=self.enable_dueling_DQN).to(device)
             target_dqn.load_state_dict(policy_dqn.state_dict())
 
             epsilon_history = []
@@ -167,6 +186,9 @@ class Agent:
                     torch.save(policy_dqn.state_dict(), self.MODEL_FILE)
                     best_reward = episode_reward
 
+                    # write into a file the memory contents
+                    memory.save_memory_to_file(self.DATA_FILE)
+
 
                 #update graph every 10 second
                 current_time = datetime.now()
@@ -175,6 +197,7 @@ class Agent:
                     last_graph_update = current_time
 
 
+                # linear decay for epsilon
                 epsilon = max(self.epsilon_end, self.epsilon_decay * epsilon)
                 epsilon_history.append(epsilon)
 
@@ -183,6 +206,7 @@ class Agent:
 
                     self.optimise(policy_dqn, target_dqn, batch)
 
+                    # sync the target network with respect to the policy network
                     if step_count > self.network_sync_rate:
                         target_dqn.load_state_dict(policy_dqn.state_dict())
                         step_count = 0
@@ -201,8 +225,12 @@ class Agent:
         terminated = torch.tensor(terminated, dtype=torch.float32).to(device)
 
         with torch.no_grad():
-            target_q_values = target_dqn(new_states).max(dim=1)[0]
-            target_q_values = rewards + self.discount_factor * target_q_values * (1 - terminated)
+            if self.enable_double_DQN:
+                policy_best_action = policy_dqn(new_states).argmax(dim=1)
+                target_q_values = rewards + self.discount_factor * target_dqn(new_states).gather(1, policy_best_action.unsqueeze(1)).squeeze(1)
+            else:
+                target_q_values = target_dqn(new_states).max(dim=1)[0]
+                target_q_values = rewards + self.discount_factor * target_q_values * (1 - terminated)
 
         current_q_values = policy_dqn(states).gather(1, actions.unsqueeze(1)).squeeze(1)
 

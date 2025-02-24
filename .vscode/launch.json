@@ -6,7 +6,7 @@
     "configurations": [
 
         {
-            "name": "Train FlappyBird1",
+            "name": "Train FlappyBird",
             "type": "debugpy",
             "request": "launch",
             "program": "agent.py",
