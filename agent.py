@@ -57,6 +57,7 @@ class Agent:
         self.maximum_reward_stop = instance_hyperparameters['maximum_reward_stop']
         self.enable_double_DQN = instance_hyperparameters['enable_double_DQN']
         self.enable_dueling_DQN = instance_hyperparameters['enable_dueling_DQN']
+        self.prioritised_replay = instance_hyperparameters['prioritised_replay']
 
         # define loss and optimiser
         self.loss_fn = torch.nn.MSELoss()
@@ -93,7 +94,7 @@ class Agent:
         policy_dqn = DQN(state_dim=num_states, action_dim=num_actions, hidden_dim=self.hidden_dims, enable_dueling_DQN=self.enable_dueling_DQN).to(device)
 
         # Set up the optimizer with the policy DQN parameters and learning rate
-        self.optimiser = torch.optim.Adam(params=policy_dqn.parameters(), lr=self.lr)
+        self.optimiser = torch.optim.Adam(params=policy_dqn.parameters(), lr=self.lr, betas=(0.9, 0.999))
 
         if is_training:
 
@@ -178,7 +179,7 @@ class Agent:
             # save model when best rewards is obtained to log
             if is_training:
                 if episode_reward > best_reward:
-                    log_message = f"Training {datetime.now().strftime(DATE_FORMAT)}: New best reward: {best_reward} Time taken: {datetime.now() - start_time} Episode: {episode}\n"
+                    log_message = f"Training {datetime.now().strftime(DATE_FORMAT)}: New best reward: {best_reward} Time taken: {datetime.now() - start_time} Episode: {episode} Saved memory size: {len(memory)} out of {self.replay_memory_size}\n"
                     print(log_message)
                     with open(self.LOG_FILE, "a") as file:
                         file.write(log_message)
@@ -202,7 +203,10 @@ class Agent:
                 epsilon_history.append(epsilon)
 
                 if len(memory) > self.batch_size:
-                    batch = memory.sample(self.batch_size)
+                    if self.prioritised_replay:
+                        batch = memory.priority_sample(self.batch_size, device)
+                    else:
+                        batch = memory.sample(self.batch_size)
 
                     self.optimise(policy_dqn, target_dqn, batch)
 

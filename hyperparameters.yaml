@@ -21,18 +21,18 @@ flappybird1:
   checkpoint: ""
   prior_data: ""
   replay_memory_size: 10000
-  batch_size: 32
+  batch_size: 64
   epsilon_start: 1.0
   epsilon_decay: 0.9995
   epsilon_end: 0.05
-  network_sync_rate: 1000
+  network_sync_rate: 10
   discount_factor: 0.99
-  lr: 0.001
-  hidden_dims: 1024
+  lr: 0.0001
+  hidden_dims: 256
   maximum_reward_stop: 100000
   enable_double_DQN: True
   enable_dueling_DQN: True
-
+  prioritised_replay: True
 ## use hidden dueling 64
 # cartpole1:
 #   env_id: CartPole-v1

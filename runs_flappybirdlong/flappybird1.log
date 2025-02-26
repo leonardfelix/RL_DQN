@@ -1,0 +1,22 @@
+Training 02-25 02:21:37: Training starting...Training 02-25 02:21:47: New best reward: -9999999 Time taken: 0:00:09.629608 Episode: 0 Saved memory size: 50 out of 100000
+Training 02-25 02:21:47: New best reward: -8.099999999999998 Time taken: 0:00:10.431476 Episode: 2 Saved memory size: 150 out of 100000
+Training 02-25 02:21:53: New best reward: -6.899999999999999 Time taken: 0:00:16.277874 Episode: 40 Saved memory size: 2050 out of 100000
+Training 02-25 02:21:58: New best reward: -4.499999999999998 Time taken: 0:00:21.395103 Episode: 60 Saved memory size: 3050 out of 100000
+Training 02-25 02:22:02: New best reward: -3.299999999999998 Time taken: 0:00:25.429862 Episode: 63 Saved memory size: 3200 out of 100000
+Training 02-25 02:22:07: New best reward: -2.699999999999998 Time taken: 0:00:30.275097 Episode: 66 Saved memory size: 3350 out of 100000
+Training 02-25 02:22:31: New best reward: -0.8999999999999986 Time taken: 0:00:53.808018 Episode: 198 Saved memory size: 9950 out of 100000
+Training 02-25 02:22:43: New best reward: -0.29999999999999893 Time taken: 0:01:06.476772 Episode: 235 Saved memory size: 11800 out of 100000
+Training 02-25 02:22:55: New best reward: 2.0999999999999996 Time taken: 0:01:18.028810 Episode: 258 Saved memory size: 12951 out of 100000
+Training 02-25 02:23:04: New best reward: 2.1999999999999993 Time taken: 0:01:26.728763 Episode: 260 Saved memory size: 13053 out of 100000
+Training 02-25 02:23:28: New best reward: 2.299999999999999 Time taken: 0:01:50.909039 Episode: 363 Saved memory size: 18193 out of 100000
+Training 02-25 02:23:39: New best reward: 2.799999999999999 Time taken: 0:02:02.597545 Episode: 364 Saved memory size: 18249 out of 100000
+Training 02-25 02:24:14: New best reward: 3.299999999999997 Time taken: 0:02:37.319879 Episode: 491 Saved memory size: 24656 out of 100000
+Training 02-25 02:24:35: New best reward: 3.599999999999995 Time taken: 0:02:58.034505 Episode: 515 Saved memory size: 25867 out of 100000
+Training 02-25 02:25:25: New best reward: 4.299999999999995 Time taken: 0:03:47.912855 Episode: 705 Saved memory size: 35990 out of 100000
+Training 02-25 02:25:55: New best reward: 4.299999999999999 Time taken: 0:04:18.119602 Episode: 745 Saved memory size: 38179 out of 100000
+Training 02-25 02:27:43: New best reward: 4.999999999999991 Time taken: 0:06:06.344924 Episode: 1040 Saved memory size: 56084 out of 100000
+Training 02-25 02:32:56: New best reward: 5.599999999999957 Time taken: 0:11:19.503369 Episode: 1574 Saved memory size: 88992 out of 100000
+Training 02-25 02:35:27: New best reward: 5.999999999999993 Time taken: 0:13:50.455491 Episode: 1608 Saved memory size: 90930 out of 100000
+Training 02-25 02:41:12: New best reward: 9.599999999999971 Time taken: 0:19:35.002074 Episode: 2211 Saved memory size: 100000 out of 100000
+Training 02-25 02:42:40: New best reward: 10.899999999999947 Time taken: 0:21:03.246215 Episode: 2256 Saved memory size: 100000 out of 100000
+Training 02-25 02:46:23: New best reward: 11.399999999999972 Time taken: 0:24:46.452332 Episode: 2979 Saved memory size: 100000 out of 100000

@@ -1,0 +1,22 @@
+Training 02-24 23:46:40: Training starting...Training 02-24 23:46:54: New best reward: -9999999 Time taken: 0:00:13.168820 Episode: 0
+Training 02-24 23:46:55: New best reward: -8.7 Time taken: 0:00:14.438385 Episode: 1
+Training 02-24 23:46:57: New best reward: -7.499999999999998 Time taken: 0:00:16.247546 Episode: 6
+Training 02-24 23:47:01: New best reward: -6.899999999999999 Time taken: 0:00:20.919363 Episode: 18
+Training 02-24 23:47:47: New best reward: -5.099999999999998 Time taken: 0:01:06.825964 Episode: 156
+Training 02-24 23:48:00: New best reward: -3.899999999999998 Time taken: 0:01:19.132377 Episode: 169
+Training 02-24 23:50:04: New best reward: -1.4999999999999982 Time taken: 0:03:23.146092 Episode: 525
+Training 02-24 23:56:13: New best reward: -0.8999999999999986 Time taken: 0:09:32.889659 Episode: 1294
+Training 02-24 23:58:33: New best reward: 0.3000000000000007 Time taken: 0:11:52.158376 Episode: 1522
+Training 02-25 00:00:28: New best reward: 0.9000000000000004 Time taken: 0:13:47.529792 Episode: 1684
+Training 02-25 00:04:07: New best reward: 0.9000000000000017 Time taken: 0:17:26.736006 Episode: 2074
+Training 02-25 00:07:59: New best reward: 1.5 Time taken: 0:21:18.558081 Episode: 2315
+Training 02-25 00:11:43: New best reward: 2.0999999999999996 Time taken: 0:25:02.986957 Episode: 2505
+Training 02-25 00:14:29: New best reward: 2.200000000000001 Time taken: 0:27:48.153663 Episode: 2522
+Training 02-25 00:18:28: New best reward: 2.299999999999999 Time taken: 0:31:48.024304 Episode: 2809
+Training 02-25 00:20:24: New best reward: 2.3 Time taken: 0:33:43.780152 Episode: 2824
+Training 02-25 00:23:14: New best reward: 2.4999999999999982 Time taken: 0:36:33.345888 Episode: 2904
+Training 02-25 00:25:47: New best reward: 2.799999999999999 Time taken: 0:39:06.780214 Episode: 2983
+Training 02-25 00:31:51: New best reward: 2.8999999999999986 Time taken: 0:45:10.326097 Episode: 3454
+Training 02-25 00:40:41: New best reward: 3.499999999999993 Time taken: 0:54:00.293275 Episode: 4282
+Training 02-25 00:49:19: New best reward: 3.700000000000002 Time taken: 1:02:38.696644 Episode: 5040
+Training 02-25 00:56:57: New best reward: 5.5999999999999925 Time taken: 1:10:16.798246 Episode: 5488
