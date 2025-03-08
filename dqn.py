@@ -12,6 +12,8 @@ class DQN(nn.Module):
         self.fc1 = nn.Linear(state_dim, hidden_dim*2)
 
         self.fc2 = nn.Linear(hidden_dim*2, hidden_dim)
+        # self.fc3 = nn.Linear(hidden_dim, hidden_dim)
+        # self.fc4 = nn.Linear(hidden_dim*2, hidden_dim)
 
         if self.enable_dueling_DQN:
             # Value network
@@ -28,6 +30,8 @@ class DQN(nn.Module):
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
+        # x = F.relu(self.fc3(x))
+        # x = F.relu(self.fc4(x))
         
         if self.enable_dueling_DQN:
             v = F.relu(self.fc_value(x))

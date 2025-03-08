@@ -13,7 +13,7 @@
             "console": "integratedTerminal",
             "args": [
                 "flappybird1",
-                "--train",
+                "--render",
             ]
         }
     ]

@@ -7,6 +7,7 @@ import numpy as np
 
 from dqn import DQN
 from experience_replay import ReplayMemory
+from prioritised_experience_replay import PrioritisedReplayMemory
 import itertools
 
 import yaml
@@ -57,7 +58,9 @@ class Agent:
         self.maximum_reward_stop = instance_hyperparameters['maximum_reward_stop']
         self.enable_double_DQN = instance_hyperparameters['enable_double_DQN']
         self.enable_dueling_DQN = instance_hyperparameters['enable_dueling_DQN']
-        self.prioritised_replay = instance_hyperparameters['prioritised_replay']
+        self.alpha = instance_hyperparameters['alpha']
+        self.beta = instance_hyperparameters['beta']
+        self.beta_increment = instance_hyperparameters['beta_increment']
 
         # define loss and optimiser
         self.loss_fn = torch.nn.MSELoss()
@@ -114,7 +117,10 @@ class Agent:
 
                 
             # set up the memory, target network, and step count
-            memory = ReplayMemory(self.replay_memory_size)
+            # memory = ReplayMemory(self.replay_memory_size)
+
+            memory = PrioritisedReplayMemory(maxlen=self.replay_memory_size, alpha=self.alpha)
+            beta = self.beta  # Importance sampling weight
 
             # load if prior data is provided
             if self.prior_data != "":
@@ -198,47 +204,52 @@ class Agent:
                     last_graph_update = current_time
 
 
-                # linear decay for epsilon
+                # exponential decay for epsilon
                 epsilon = max(self.epsilon_end, self.epsilon_decay * epsilon)
                 epsilon_history.append(epsilon)
 
-                if len(memory) > self.batch_size:
-                    if self.prioritised_replay:
-                        batch = memory.priority_sample(self.batch_size, device)
-                    else:
-                        batch = memory.sample(self.batch_size)
+                # linear anneal for beta
+                beta = min(1.0, beta + self.beta_increment)
 
-                    self.optimise(policy_dqn, target_dqn, batch)
+                if len(memory) > self.batch_size:
+                    batch = memory.sample(self.batch_size, beta)
+
+                    self.optimise(policy_dqn, target_dqn, batch, memory)
 
                     # sync the target network with respect to the policy network
                     if step_count > self.network_sync_rate:
                         target_dqn.load_state_dict(policy_dqn.state_dict())
                         step_count = 0
 
-    def optimise(self, policy_dqn, target_dqn, batch):
+    def optimise(self, policy_dqn, target_dqn, batch, memory):
         """
         Optimises the policy DQN using the provided batch.
         """
         # optimise the network
-        states, actions, new_states, rewards, terminated = zip(*batch)
+        states, actions, new_states, rewards, terminated, weights, indices = batch
 
         states = torch.stack(states)
         actions = torch.stack(actions)
         new_states = torch.stack(new_states)
         rewards = torch.stack(rewards)
         terminated = torch.tensor(terminated, dtype=torch.float32).to(device)
+        weights = torch.tensor(weights, dtype=torch.float32).to(device)
+        indices = torch.tensor(indices, dtype=torch.int64).to(device)
 
         with torch.no_grad():
             if self.enable_double_DQN:
                 policy_best_action = policy_dqn(new_states).argmax(dim=1)
-                target_q_values = rewards + self.discount_factor * target_dqn(new_states).gather(1, policy_best_action.unsqueeze(1)).squeeze(1)
+                target_q_values = target_dqn(new_states).gather(1, policy_best_action.unsqueeze(1)).squeeze(1)
             else:
                 target_q_values = target_dqn(new_states).max(dim=1)[0]
-                target_q_values = rewards + self.discount_factor * target_q_values * (1 - terminated)
+                
+            target_q_values = rewards + self.discount_factor * target_q_values * (1 - terminated)
 
         current_q_values = policy_dqn(states).gather(1, actions.unsqueeze(1)).squeeze(1)
 
-        loss = self.loss_fn(current_q_values, target_q_values)
+        td_errors = target_q_values - current_q_values
+
+        loss = torch.mean(td_errors**2 * weights)
 
         # Reset the gradients of all optimised variables
         self.optimiser.zero_grad()
@@ -248,6 +259,8 @@ class Agent:
 
         # Update the model parameters using the gradients and the chosen optimiser algorithm
         self.optimiser.step()
+
+        memory.update_priorities(indices, abs(td_errors))
 
     def save_graph(self, rewards_per_episode, epsilon_history):
         

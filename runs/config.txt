@@ -1,0 +1,17 @@
+flappybird1:
+  env_id: FlappyBird-v0
+  checkpoint: ""
+  prior_data: ""
+  replay_memory_size: 100000
+  batch_size: 32
+  epsilon_start: 1.0
+  epsilon_decay: 0.995
+  epsilon_end: 0.01
+  network_sync_rate: 1000
+  discount_factor: 0.99
+  lr: 0.00025
+  hidden_dims: 256
+  maximum_reward_stop: 100000
+  enable_double_DQN: True
+  enable_dueling_DQN: True
+  prioritised_replay: False
